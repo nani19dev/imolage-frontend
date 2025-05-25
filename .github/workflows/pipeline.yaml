@@ -1,0 +1,35 @@
+name: Build & upload to Firebase App Distribution 
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+          channel: "stable"
+          flutter-version: 3.19.5
+    - name: Make envfile
+      uses: SpicyPizza/create-envfile@v2.0
+      with:
+        envkey_DEBUG: false
+        envkey_API_URL: ${{env.API_URL}}
+        some_other_variable: foobar
+        file_name: .env
+        fail_on_empty: false
+        sort_keys: false
+    - name: Build APK
+      run: flutter build apk --release
+    - run: ls build/app/outputs/flutter-apk
+    - name: Deploy to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{secrets.APP_ID}}
+        serviceCredentialsFileContent: ${{secrets.CREDENTIAL_FILE_CONTENT}}
+        groups: testers
+        file: build/app/outputs/flutter-apk/app-release.apk

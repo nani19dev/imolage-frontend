@@ -16,8 +16,13 @@ import 'package:frontend/features/property/logic/bloc/property_bloc.dart';
 import 'package:frontend/features/transaction/data/repositories/transaction_reposiroty.dart';
 import 'package:frontend/features/transaction/logic/bloc/transaction_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await dotenv.load(fileName: '.env');
   //apiUrl = dotenv.env['API_URL'] ?? '';
   //appName = dotenv.env['APP_NAME'] ?? '';
